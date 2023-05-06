@@ -572,14 +572,13 @@ const controlRecipes = async function() {
         await _modelJs.loadRecipe(id);
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
     } catch (error) {
-        alert(error);
+        (0, _recipeViewJsDefault.default).renderError();
     }
 };
-const events = [
-    "load",
-    "hashchange"
-];
-events.forEach((event)=>window.addEventListener(event, controlRecipes));
+const init = function() {
+    (0, _recipeViewJsDefault.default).addHanlderRender(controlRecipes);
+};
+init();
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","./views/recipeView.js":"l60JC"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
@@ -2615,6 +2614,7 @@ const loadRecipe = async function(id) {
         console.log(state.recipe);
     } catch (error) {
         console.log(error);
+        throw error;
     }
 };
 
@@ -2663,11 +2663,22 @@ var _fractyDefault = parcelHelpers.interopDefault(_fracty);
 class RecipeView {
     #parentElement = document.querySelector(".recipe");
     #data;
+    #errorMessage = "We could not find that recipe. Please try another one!";
     render(data) {
         this.#data = data;
         const markup = this.#generateMarkup();
         this.#clear();
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    addHanlderRender(handler) {
+        const events = [
+            "load",
+            "hashchange"
+        ];
+        events.forEach((event)=>window.addEventListener(event, handler));
+    }
+    #clear() {
+        this.#parentElement.innerHTML = "";
     }
     renderSpinner = function() {
         const markup = `
@@ -2677,11 +2688,22 @@ class RecipeView {
           </svg>
         </div>
         `;
-        this.#parentElement.innerHTML = "";
+        this.#clear();
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
     };
-    #clear() {
-        this.#parentElement.innerHTML = "";
+    renderError(message = this.#errorMessage) {
+        const markup = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${(0, _iconsSvgDefault.default)}#icon-alert-triangle"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+      `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
     }
     #generateMarkup() {
         return `
