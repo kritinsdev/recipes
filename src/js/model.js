@@ -1,14 +1,17 @@
-import { async } from 'regenerator-runtime';
-import { API_URL } from './config';
+import { API_URL, API_KEY } from './config';
 import { getJSON } from './helpers';
 
 export const state = {
     recipe: {},
+    search: {
+        query: '',
+        results: [],
+    }
 }
 
 export const loadRecipe = async function (id) {
     try {
-        const data = await getJSON(`${API_URL}/${id}`);
+        const data = await getJSON(`${API_URL}${id}`);
 
         const { recipe } = data.data;
 
@@ -23,9 +26,27 @@ export const loadRecipe = async function (id) {
             ingredients: recipe.ingredients
         }
 
-        console.log(state.recipe);
     } catch (error) {
         console.log(error);
+        throw error;
+    }
+}
+
+export const loadSearchResults = async function(query) {
+    try {   
+        state.search.query = query;
+        const data = await getJSON(`${API_URL}?search=${query}&key=${API_KEY}`);
+
+        state.search.results = data.data.recipes.map(recipe => {
+            return {
+                id: recipe.id,
+                title: recipe.title,
+                publisher: recipe.publisher,
+                image: recipe.image_url,
+            }
+        });
+        
+    } catch (error) {
         throw error;
     }
 }
