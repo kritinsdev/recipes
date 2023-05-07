@@ -6,8 +6,6 @@ class RecipeView extends View {
   _parentElement = document.querySelector('.recipe');
   _errorMessage = 'We could not find that recipe. Please try another one!';
   _message = '';
-  
-
 
   addHandlerRender(handler) {
     const events = ['load', 'hashchange'];
