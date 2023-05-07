@@ -590,13 +590,20 @@ const controlSearchResults = async function() {
         const query = (0, _searchViewJsDefault.default).getQuery();
         if (!query) return;
         await _modelJs.loadSearchResults(query);
-        (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(6));
+        (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage());
         (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
-    } catch (error) {}
+    } catch (error) {
+        console.log(error);
+    }
+};
+const controlPagination = function(goto) {
+    (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(goto));
+    (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
 };
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
     (0, _searchViewJsDefault.default).addHandlerSearch(controlSearchResults);
+    (0, _paginationViewJsDefault.default).addHandlerClick(controlPagination);
 };
 init();
 
@@ -2659,7 +2666,7 @@ const loadSearchResults = async function(query) {
         throw error;
     }
 };
-const getSearchResultsPage = function(page = state.search.start) {
+const getSearchResultsPage = function(page = state.search.page) {
     state.search.page = page;
     const start = (page - 1) * state.search.resultsPerPage;
     const end = page * state.search.resultsPerPage;
@@ -3073,23 +3080,59 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _view = require("./View");
 var _viewDefault = parcelHelpers.interopDefault(_view);
-// import icons from 'url:../../img/icons.svg';
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class PaginationView extends (0, _viewDefault.default) {
     _parentElement = document.querySelector(".pagination");
+    addHandlerClick(handler) {
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--inline");
+            if (!btn) return;
+            const goto = +btn.dataset.goto;
+            handler(goto);
+        });
+    }
     _generateMarkup() {
+        const currentPage = this._data.page;
         const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
-        console.log(numPages);
         //Page 1, there are other pages
-        if (this._data.page === 1 && numPages > 1) return "first page with other pages";
+        if (currentPage === 1 && numPages > 1) return `
+      <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+        <svg class="search__icon">
+          <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+        </svg>
+        <span>Page ${currentPage + 1}</span>
+      </button>
+      `;
         //Last page
-        if (this._data.page === numPages && numPages > 1) return "last page";
+        if (currentPage === numPages && numPages > 1) return `
+        <button data-goto="${currentPage - 1}" data class="btn--inline pagination__btn--prev">
+          <svg class="search__icon">
+            <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+          </svg>
+          <span>Page ${currentPage - 1}</span>
+        </button>
+        `;
         //Ohter page 
-        if (this._data.page < numPages) return "other";
-        return "only 1 page";
+        if (currentPage < numPages) return `
+      <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+        <svg class="search__icon">
+          <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+        </svg>
+        <span>Page ${currentPage + 1}</span>
+      </button>
+      <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+        <svg class="search__icon">
+          <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+        </svg>
+        <span>Page ${currentPage - 1}</span>
+      </button>
+      `;
+        return "";
     }
 }
 exports.default = new PaginationView();
 
-},{"./View":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["d8XZh","aenu9"], "aenu9", "parcelRequire3a11")
+},{"./View":"5cUXS","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../../img/icons.svg":"loVOp"}]},["d8XZh","aenu9"], "aenu9", "parcelRequire3a11")
 
 //# sourceMappingURL=index.e37f48ea.js.map

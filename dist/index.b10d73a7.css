@@ -401,12 +401,7 @@ body {
   display: flex;
 }
 
-.preview__link:hover {
-  background-color: #f9f5f3;
-  transform: translateY(-2px);
-}
-
-.preview__link--active {
+.preview__link:hover, .preview__link--active {
   background-color: #f9f5f3;
 }
 
@@ -487,7 +482,6 @@ body {
 
 .search-results {
   flex-direction: column;
-  padding: 3rem 0;
   display: flex;
 }
 
