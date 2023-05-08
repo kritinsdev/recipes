@@ -580,7 +580,6 @@ const controlRecipes = async function() {
         (0, _recipeViewJsDefault.default).renderSpinner();
         await _modelJs.loadRecipe(id);
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
-        controlServings();
     } catch (error) {
         (0, _recipeViewJsDefault.default).renderError();
     }
@@ -2165,7 +2164,7 @@ class RecipeView extends (0, _viewDefault.default) {
             const btn = e.target.closest(".btn--update-servings");
             if (!btn) return;
             const servingTo = +btn.dataset.servingTo;
-            handler(servingTo);
+            if (servingTo > 0) handler(servingTo);
         });
     }
     _generateMarkup() {
