@@ -11,6 +11,10 @@
       display: block;
     }
   }
+
+  .wrap {
+    display: flex;
+  }
   
   .search {
     background-color: #fff;
@@ -58,7 +62,6 @@
   
   .nav {
     align-self: stretch;
-    margin-right: 2.5rem;
   
     &__list {
       list-style: none;
